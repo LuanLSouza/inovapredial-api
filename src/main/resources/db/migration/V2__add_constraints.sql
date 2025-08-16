@@ -1,0 +1,57 @@
+ALTER TABLE "equipment_plan"
+ADD FOREIGN KEY("equipment_id") REFERENCES "equipment"("id")
+ON UPDATE RESTRICT ON DELETE RESTRICT;
+ALTER TABLE "equipment_plan"
+ADD FOREIGN KEY("plan_id") REFERENCES "maintenance_plan"("id")
+ON UPDATE CASCADE ON DELETE RESTRICT;
+ALTER TABLE "equipment"
+ADD FOREIGN KEY("operation_calendar_id") REFERENCES "calendar"("id")
+ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE "employee"
+ADD FOREIGN KEY("operation_calendar") REFERENCES "calendar"("id")
+ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE "work_order"
+ADD FOREIGN KEY("equipment_id") REFERENCES "equipment"("id")
+ON UPDATE CASCADE ON DELETE RESTRICT;
+ALTER TABLE "work_order"
+ADD FOREIGN KEY("employee_id") REFERENCES "employee"("id")
+ON UPDATE NO ACTION ON DELETE NO ACTION;
+ALTER TABLE "work_order"
+ADD FOREIGN KEY("plan_id") REFERENCES "maintenance_plan"("id")
+ON UPDATE CASCADE ON DELETE RESTRICT;
+ALTER TABLE "inventory"
+ADD FOREIGN KEY("employee_id") REFERENCES "employee"("id")
+ON UPDATE NO ACTION ON DELETE NO ACTION;
+ALTER TABLE "task"
+ADD FOREIGN KEY("work_order_id") REFERENCES "work_order"("id")
+ON UPDATE CASCADE ON DELETE RESTRICT;
+ALTER TABLE "task"
+ADD FOREIGN KEY("employee_id") REFERENCES "employee"("id")
+ON UPDATE NO ACTION ON DELETE NO ACTION;
+ALTER TABLE "work_order_inventory"
+ADD FOREIGN KEY("work_order_id") REFERENCES "work_order"("id")
+ON UPDATE CASCADE ON DELETE RESTRICT;
+ALTER TABLE "work_order_inventory"
+ADD FOREIGN KEY("inventory_id") REFERENCES "inventory"("id")
+ON UPDATE CASCADE ON DELETE RESTRICT;
+ALTER TABLE "building"
+ADD FOREIGN KEY("address_id") REFERENCES "adress"("id")
+ON UPDATE CASCADE ON DELETE RESTRICT;
+ALTER TABLE "user_building"
+ADD FOREIGN KEY("user_id") REFERENCES "user"("id")
+ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE "user_building"
+ADD FOREIGN KEY("building_id") REFERENCES "building"("id")
+ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE "equipment"
+ADD FOREIGN KEY("user_id") REFERENCES "user_building"("user_id")
+ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE "equipment"
+ADD FOREIGN KEY("building_id") REFERENCES "user_building"("building_id")
+ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE "employee"
+ADD FOREIGN KEY("building_id") REFERENCES "building"("id")
+ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE "inventory"
+ADD FOREIGN KEY("building_id") REFERENCES "building"("id")
+ON UPDATE CASCADE ON DELETE CASCADE;
