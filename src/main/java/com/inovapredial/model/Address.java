@@ -13,12 +13,12 @@ import lombok.NoArgsConstructor;
 import java.util.UUID;
 
 @Entity
-@Table(name = "adress")
+@Table(name = "address")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Adress {
+public class Address {
     @Id
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.UUID)
     private UUID id;

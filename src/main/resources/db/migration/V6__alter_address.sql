@@ -1,0 +1,1 @@
+ALTER TABLE "adress" RENAME TO "address";
