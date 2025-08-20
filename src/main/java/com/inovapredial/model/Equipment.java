@@ -1,6 +1,5 @@
 package com.inovapredial.model;
 
-import com.inovapredial.Calendar;
 import com.inovapredial.model.enums.Criticality;
 import com.inovapredial.model.enums.EquipmentStatus;
 import com.inovapredial.model.enums.EquipmentType;

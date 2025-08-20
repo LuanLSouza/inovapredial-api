@@ -1,4 +1,4 @@
-package com.inovapredial;
+package com.inovapredial.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
