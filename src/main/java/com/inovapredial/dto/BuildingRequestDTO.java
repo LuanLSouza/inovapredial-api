@@ -8,6 +8,6 @@ public record BuildingRequestDTO(
          BuildingType buildingType,
         Integer constructionYear,
         String description,
-        AddressRequestDTO addressRequestDTO
+        AddressRequestDTO addressRequest
 ) {
 }

@@ -1,15 +1,22 @@
 package com.inovapredial.service;
 
+import com.inovapredial.dto.BuildingFilterDTO;
 import com.inovapredial.dto.BuildingRequestDTO;
 import com.inovapredial.dto.BuildingResponseDTO;
+import com.inovapredial.dto.PageResponseDTO;
 import com.inovapredial.exceptions.NotFoundException;
 import com.inovapredial.mapper.BuildingMapper;
 import com.inovapredial.model.Address;
 import com.inovapredial.model.Building;
 import com.inovapredial.repository.AddressRepository;
 import com.inovapredial.repository.BuildingRepository;
+import com.inovapredial.specification.BuildingSpecification;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
@@ -25,7 +32,7 @@ public class BuildingService {
     private final BuildingRepository buildingRepository;
 
     public Building create(BuildingRequestDTO dto) {
-        var address = mapper.toEntity(dto.addressRequestDTO());
+        var address = mapper.toEntity(dto.addressRequest());
         var toSave = mapper.toEntity(dto);
 
         toSave.setAddress(address);
@@ -38,15 +45,15 @@ public class BuildingService {
 
         var buildingToUpdate = findById(id);
 
-        if (dto.addressRequestDTO() != null) {
+        if (dto.addressRequest() != null) {
             Address addressToUpdate = buildingToUpdate.getAddress();
 
             if (addressToUpdate == null) {
-                addressToUpdate = mapper.toEntity(dto.addressRequestDTO());
+                addressToUpdate = mapper.toEntity(dto.addressRequest());
                 addressToUpdate = addressRepository.save(addressToUpdate);
                 buildingToUpdate.setAddress(addressToUpdate);
             } else {
-                mapper.updateAddressFromRequestDTO(dto.addressRequestDTO(), addressToUpdate);
+                mapper.updateAddressFromRequestDTO(dto.addressRequest(), addressToUpdate);
                 addressRepository.save(addressToUpdate);
             }
         }
@@ -73,5 +80,26 @@ public class BuildingService {
             responseDTOS.add(responseDTO);
         }
         return responseDTOS;
+    }
+
+    public PageResponseDTO<BuildingResponseDTO> findAllWithFilters(BuildingFilterDTO filter, int page, int size, String sortBy, String sortDirection) {
+        Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortBy);
+        Pageable pageable = PageRequest.of(page, size, sort);
+        
+        Page<Building> buildingPage = buildingRepository.findAll(BuildingSpecification.withFilters(filter), pageable);
+        
+        List<BuildingResponseDTO> content = buildingPage.getContent().stream()
+                .map(mapper::toResponseDTO)
+                .toList();
+        
+        return PageResponseDTO.<BuildingResponseDTO>builder()
+                .content(content)
+                .pageNumber(page)
+                .pageSize(size)
+                .totalElements(buildingPage.getTotalElements())
+                .totalPages(buildingPage.getTotalPages())
+                .hasNext(buildingPage.hasNext())
+                .hasPrevious(buildingPage.hasPrevious())
+                .build();
     }
 }
