@@ -1,16 +1,12 @@
 package com.inovapredial.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
 
 import java.util.List;
 
-@Data
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter
 public class PageResponseDTO<T> {
     private List<T> content;
     private int pageNumber;
@@ -20,3 +16,4 @@ public class PageResponseDTO<T> {
     private boolean hasNext;
     private boolean hasPrevious;
 }
+
