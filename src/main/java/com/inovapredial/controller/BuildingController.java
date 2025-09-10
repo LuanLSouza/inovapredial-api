@@ -6,6 +6,7 @@ import com.inovapredial.dto.BuildingResponseDTO;
 import com.inovapredial.dto.PageResponseDTO;
 import com.inovapredial.mapper.BuildingMapper;
 import com.inovapredial.model.Building;
+import com.inovapredial.model.enums.BuildingType;
 import com.inovapredial.service.BuildingService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,8 +23,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("buildings")
 @RequiredArgsConstructor
@@ -32,12 +31,14 @@ public class BuildingController {
     private final BuildingService buildingService;
     private final BuildingMapper buildingMapper;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public BuildingResponseDTO create(@Valid @RequestBody BuildingRequestDTO dto){
         return  buildingMapper.toResponseDTO(buildingService.create(dto));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("{id}")
     @ResponseStatus(HttpStatus.OK)
     public BuildingResponseDTO update(@PathVariable String id,
@@ -48,6 +49,7 @@ public class BuildingController {
 
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("{id}")
     @ResponseStatus(HttpStatus.OK)
     public BuildingResponseDTO findById(@PathVariable String id) {
@@ -55,18 +57,14 @@ public class BuildingController {
         return buildingMapper.toResponseDTO(building);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable String id) {
         buildingService.delete(id);
     }
 
-    @GetMapping
-    @ResponseStatus(HttpStatus.OK)
-    public List<BuildingResponseDTO> findAll() {
-        return buildingService.findAll();
-    }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/search")
     @ResponseStatus(HttpStatus.OK)
     public PageResponseDTO<BuildingResponseDTO> findAllWithFilters(
@@ -87,7 +85,7 @@ public class BuildingController {
         
         BuildingFilterDTO filter = BuildingFilterDTO.builder()
                 .name(name)
-                .buildingType(buildingType != null ? com.inovapredial.model.enums.BuildingType.valueOf(buildingType) : null)
+                .buildingType(buildingType != null ? BuildingType.valueOf(buildingType) : null)
                 .constructionYear(constructionYear)
                 .description(description)
                 .street(street)
@@ -102,6 +100,7 @@ public class BuildingController {
     }
 
     @PostMapping("/search")
+    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.OK)
     public PageResponseDTO<BuildingResponseDTO> findAllWithFiltersPost(
             @RequestBody(required = false) BuildingFilterDTO filter,

@@ -2,6 +2,7 @@ package com.inovapredial.specification;
 
 import com.inovapredial.dto.BuildingFilterDTO;
 import com.inovapredial.model.Building;
+import com.inovapredial.model.OwnUser;
 import com.inovapredial.model.enums.BuildingType;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -12,9 +13,12 @@ import java.util.List;
 
 public class BuildingSpecification {
 
-    public static Specification<Building> withFilters(BuildingFilterDTO filter) {
+    public static Specification<Building> withFilters(BuildingFilterDTO filter, OwnUser currentUser) {
         return (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
+
+            Join<Building, OwnUser> userJoin = root.join("users");
+            predicates.add(criteriaBuilder.equal(userJoin.get("id"), currentUser.getId()));
 
             // Filtros do Building
             if (filter.getName() != null && !filter.getName().trim().isEmpty()) {

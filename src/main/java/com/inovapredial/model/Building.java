@@ -52,5 +52,6 @@ public class Building implements Serializable {
     private Address address;
 
     @ManyToMany(mappedBy = "buildings")
+    @Builder.Default
     private Set<OwnUser> users = new HashSet<>();
 }

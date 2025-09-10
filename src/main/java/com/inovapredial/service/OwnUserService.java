@@ -4,6 +4,8 @@ import com.inovapredial.dto.OwnUserRequestDTO;
 import com.inovapredial.model.OwnUser;
 import com.inovapredial.repository.OwnUserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +30,16 @@ public class OwnUserService {
                 .build();
 
         repository.save(user);
+    }
+
+    public UserDetails loadUserByEmail(String email) {
+
+        UserDetails user = repository.findByEmail(email);
+        if (user == null){
+            throw new UsernameNotFoundException("Usuário não encontrado: " + email);
+        }
+
+        return user;
     }
 
 }

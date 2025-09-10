@@ -8,6 +8,7 @@ import com.inovapredial.exceptions.NotFoundException;
 import com.inovapredial.mapper.BuildingMapper;
 import com.inovapredial.model.Address;
 import com.inovapredial.model.Building;
+import com.inovapredial.model.OwnUser;
 import com.inovapredial.repository.AddressRepository;
 import com.inovapredial.repository.BuildingRepository;
 import com.inovapredial.specification.BuildingSpecification;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -30,14 +32,24 @@ public class BuildingService {
     private final BuildingMapper mapper;
     private final AddressRepository addressRepository;
     private final BuildingRepository buildingRepository;
+    private final SecurityContextService securityContextService;
 
+    @Transactional
     public Building create(BuildingRequestDTO dto) {
+
+        OwnUser currentUser = securityContextService.getCurrentUser();
+
         var address = mapper.toEntity(dto.addressRequest());
         var toSave = mapper.toEntity(dto);
 
         toSave.setAddress(address);
 
-        return buildingRepository.save(toSave);
+        Building savedBuilding = buildingRepository.save(toSave);
+        savedBuilding.getUsers().add(currentUser);
+
+        currentUser.getBuildings().add(savedBuilding);
+
+        return  buildingRepository.save(savedBuilding);
     }
 
     @Transactional
@@ -71,22 +83,11 @@ public class BuildingService {
         buildingRepository.delete(building);
     }
 
-    public List<BuildingResponseDTO> findAll(){
-        List<Building> buildingList = buildingRepository.findAll();
-        List<BuildingResponseDTO> responseDTOS = new LinkedList<>();
-
-        for (Building building : buildingList) {
-            var responseDTO = mapper.toResponseDTO(building);
-            responseDTOS.add(responseDTO);
-        }
-        return responseDTOS;
-    }
-
     public PageResponseDTO<BuildingResponseDTO> findAllWithFilters(BuildingFilterDTO filter, int page, int size, String sortBy, String sortDirection) {
         Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortBy);
         Pageable pageable = PageRequest.of(page, size, sort);
-        
-        Page<Building> buildingPage = buildingRepository.findAll(BuildingSpecification.withFilters(filter), pageable);
+        var ownUser = securityContextService.getCurrentUser();
+        Page<Building> buildingPage = buildingRepository.findAll(BuildingSpecification.withFilters(filter, ownUser), pageable);
         
         List<BuildingResponseDTO> content = buildingPage.getContent().stream()
                 .map(mapper::toResponseDTO)
