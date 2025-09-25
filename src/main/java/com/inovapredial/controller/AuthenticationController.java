@@ -11,6 +11,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,9 +31,11 @@ public class AuthenticationController {
     public LoginResponseDTO login(@RequestBody @Valid AuthenticationDTO data){
         var usernamePassword = new UsernamePasswordAuthenticationToken(data.login(), data.password());
         var auth = authenticationManager.authenticate(usernamePassword);
-        var token = tokenService.generateToken((OwnUser) auth.getPrincipal());
 
-        return new LoginResponseDTO(token);
+        OwnUser user = (OwnUser) auth.getPrincipal();
+        var token = tokenService.generateToken(user);
+
+        return new LoginResponseDTO(token, user.getUsername(), user.getRole());
     }
 
 }

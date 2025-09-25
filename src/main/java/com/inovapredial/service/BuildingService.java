@@ -20,9 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -56,6 +54,8 @@ public class BuildingService {
     public Building update(String id, BuildingRequestDTO dto) {
 
         var buildingToUpdate = findById(id);
+
+        mapper.updateBuildingFromRequestDTO(dto, buildingToUpdate);
 
         if (dto.addressRequest() != null) {
             Address addressToUpdate = buildingToUpdate.getAddress();

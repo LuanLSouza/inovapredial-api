@@ -49,7 +49,7 @@ CREATE TYPE "building_type" AS ENUM (
 );
 
 CREATE TABLE "adress" (
-	"id" UUID NOT NULL UNIQUE,
+	"id" UUID NOT NULL ,
 	"street" VARCHAR(255) NOT NULL,
 	"number" INTEGER NOT NULL,
 	"district" VARCHAR(255),
@@ -63,7 +63,7 @@ CREATE TABLE "adress" (
 
 
 CREATE TABLE "calendar" (
-	"id" UUID NOT NULL UNIQUE,
+	"id" UUID NOT NULL ,
 	"description" VARCHAR(50),
 	"start_time" TIME,
 	"end_time" TIME,
@@ -74,7 +74,7 @@ CREATE TABLE "calendar" (
 
 
 CREATE TABLE "equipment" (
-	"id" UUID NOT NULL UNIQUE,
+	"id" UUID NOT NULL ,
 	"identification" VARCHAR(100) NOT NULL,
 	"serial_number" VARCHAR(50),
 	"classification" CLASSIFICATION NOT NULL,
@@ -98,7 +98,7 @@ CREATE TABLE "equipment" (
 
 
 CREATE TABLE "maintenance_plan" (
-	"id" UUID NOT NULL UNIQUE,
+	"id" UUID NOT NULL ,
 	"frequency_days" INTEGER NOT NULL,
 	"requires_shutdown" BOOLEAN NOT NULL,
 	"description" VARCHAR(255),
@@ -121,8 +121,8 @@ CREATE TABLE "equipment_plan" (
 
 
 CREATE TABLE "user" (
-	"id" UUID NOT NULL UNIQUE,
-	"username" VARCHAR(255) NOT NULL UNIQUE,
+	"id" UUID NOT NULL,
+	"username" VARCHAR(255) NOT NULL ,
 	"password" VARCHAR(300) NOT NULL,
 	"email" VARCHAR(255) NOT NULL,
 	"role" VARCHAR(50),
@@ -133,7 +133,7 @@ CREATE TABLE "user" (
 
 
 CREATE TABLE "work_order" (
-	"id" UUID NOT NULL UNIQUE,
+	"id" UUID NOT NULL ,
 	"description" VARCHAR(255) NOT NULL,
 	"opening_date" TIMESTAMP NOT NULL,
 	"closing_date" TIMESTAMP,
@@ -151,7 +151,7 @@ CREATE TABLE "work_order" (
 
 
 CREATE TABLE "employee" (
-	"id" UUID NOT NULL UNIQUE,
+	"id" UUID NOT NULL ,
 	"name" VARCHAR(255) NOT NULL,
 	"specialty" VARCHAR(255),
 	"contact" VARCHAR(255) NOT NULL,
@@ -164,7 +164,7 @@ CREATE TABLE "employee" (
 
 
 CREATE TABLE "inventory" (
-	"id" UUID NOT NULL UNIQUE,
+	"id" UUID NOT NULL ,
 	"item_type" ITEM_TYPE,
 	"name" VARCHAR(255) NOT NULL,
 	"cost" NUMERIC(10,2),
@@ -179,7 +179,7 @@ CREATE TABLE "inventory" (
 
 
 CREATE TABLE "task" (
-	"id" UUID NOT NULL UNIQUE,
+	"id" UUID NOT NULL ,
 	"title" VARCHAR(255) NOT NULL,
 	"description" VARCHAR(1000),
 	"activity_status" ACTIVITY_STATUS,
@@ -209,7 +209,7 @@ CREATE TABLE "work_order_inventory" (
 
 
 CREATE TABLE "building" (
-	"id" UUID NOT NULL UNIQUE,
+	"id" UUID NOT NULL,
 	"name" VARCHAR(255) NOT NULL,
 	"building_type" BUILDING_TYPE,
 	"construction_year" INTEGER,
@@ -222,7 +222,7 @@ CREATE TABLE "building" (
 
 
 CREATE TABLE "user_building" (
-	"user_id" UUID NOT NULL UNIQUE,
-	"building_id" UUID NOT NULL UNIQUE,
+	"user_id" UUID NOT NULL,
+	"building_id" UUID NOT NULL,
 	PRIMARY KEY("user_id", "building_id")
 );
