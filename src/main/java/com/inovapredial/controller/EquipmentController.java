@@ -1,7 +1,10 @@
 package com.inovapredial.controller;
 
 import com.inovapredial.dto.EquipmentFilterDTO;
-import com.inovapredial.dto.PageResponseDTO;
+import com.inovapredial.dto.responses.PageResponseDTO;
+import com.inovapredial.dto.requests.EquipmentRequestDTO;
+import com.inovapredial.dto.responses.EquipmentResponseDTO;
+import com.inovapredial.dto.responses.PageResponseDTO;
 import com.inovapredial.mapper.EquipmentMapper;
 import com.inovapredial.model.Equipment;
 import com.inovapredial.service.EquipmentService;
@@ -44,8 +47,8 @@ public class EquipmentController {
         @ApiResponse(responseCode = "403", description = "Forbidden"),
         @ApiResponse(responseCode = "404", description = "Building not found")
     })
-    public EquipmentResponseDTO create(@Valid @RequestBody EquipmentRequestDTO dto, 
-                                      @RequestParam String buildingId) {
+    public EquipmentResponseDTO create(@Valid @RequestBody EquipmentRequestDTO dto,
+                                       @RequestParam String buildingId) {
         Equipment created = equipmentService.create(dto, buildingId);
         return equipmentMapper.toResponseDTO(created);
     }

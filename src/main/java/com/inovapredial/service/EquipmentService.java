@@ -1,7 +1,10 @@
 package com.inovapredial.service;
 
 import com.inovapredial.dto.EquipmentFilterDTO;
-import com.inovapredial.dto.PageResponseDTO;
+import com.inovapredial.dto.responses.PageResponseDTO;
+import com.inovapredial.dto.requests.EquipmentRequestDTO;
+import com.inovapredial.dto.responses.EquipmentResponseDTO;
+import com.inovapredial.dto.responses.PageResponseDTO;
 import com.inovapredial.exceptions.NotFoundException;
 import com.inovapredial.mapper.EquipmentMapper;
 import com.inovapredial.model.Building;

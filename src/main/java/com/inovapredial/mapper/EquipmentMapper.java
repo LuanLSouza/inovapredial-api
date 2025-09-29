@@ -1,5 +1,9 @@
 package com.inovapredial.mapper;
 
+import com.inovapredial.dto.requests.CalendarRequestDTO;
+import com.inovapredial.dto.requests.EquipmentRequestDTO;
+import com.inovapredial.dto.responses.CalendarResponseDTO;
+import com.inovapredial.dto.responses.EquipmentResponseDTO;
 import com.inovapredial.model.Calendar;
 import com.inovapredial.model.Equipment;
 import org.mapstruct.Mapper;
