@@ -24,3 +24,4 @@ public class BuildingFilterDTO {
     private String state;
     private String zipCode;
 }
+
