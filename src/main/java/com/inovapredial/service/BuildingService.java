@@ -1,9 +1,9 @@
 package com.inovapredial.service;
 
 import com.inovapredial.dto.BuildingFilterDTO;
-import com.inovapredial.dto.BuildingRequestDTO;
-import com.inovapredial.dto.BuildingResponseDTO;
-import com.inovapredial.dto.PageResponseDTO;
+import com.inovapredial.dto.requests.BuildingRequestDTO;
+import com.inovapredial.dto.responses.BuildingResponseDTO;
+import com.inovapredial.dto.responses.PageResponseDTO;
 import com.inovapredial.exceptions.NotFoundException;
 import com.inovapredial.mapper.BuildingMapper;
 import com.inovapredial.model.Address;

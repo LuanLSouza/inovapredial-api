@@ -1,4 +1,6 @@
-package com.inovapredial.dto;
+package com.inovapredial.dto.responses;
+
+import com.inovapredial.dto.FieldErrorsDTO;
 
 import java.time.LocalDateTime;
 import java.util.List;

@@ -1,9 +1,9 @@
 package com.inovapredial.mapper;
 
-import com.inovapredial.dto.AddressRequestDTO;
-import com.inovapredial.dto.AddressResponseDTO;
-import com.inovapredial.dto.BuildingRequestDTO;
-import com.inovapredial.dto.BuildingResponseDTO;
+import com.inovapredial.dto.requests.AddressRequestDTO;
+import com.inovapredial.dto.responses.AddressResponseDTO;
+import com.inovapredial.dto.requests.BuildingRequestDTO;
+import com.inovapredial.dto.responses.BuildingResponseDTO;
 import com.inovapredial.model.Address;
 import com.inovapredial.model.Building;
 import org.mapstruct.Mapper;

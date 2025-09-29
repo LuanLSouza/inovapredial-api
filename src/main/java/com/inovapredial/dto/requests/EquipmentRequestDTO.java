@@ -1,4 +1,4 @@
-package com.inovapredial.dto;
+package com.inovapredial.dto.requests;
 
 import com.inovapredial.model.enums.Criticality;
 import com.inovapredial.model.enums.EquipmentStatus;

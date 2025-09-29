@@ -1,6 +1,6 @@
 package com.inovapredial.exceptions;
 
-import com.inovapredial.dto.ErrorResponseDTO;
+import com.inovapredial.dto.responses.ErrorResponseDTO;
 import com.inovapredial.dto.FieldErrorsDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;

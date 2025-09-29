@@ -1,4 +1,4 @@
-package com.inovapredial.dto;
+package com.inovapredial.dto.requests;
 
 import jakarta.validation.constraints.Email;
 

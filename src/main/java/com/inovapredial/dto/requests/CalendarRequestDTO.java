@@ -1,6 +1,5 @@
-package com.inovapredial.dto;
+package com.inovapredial.dto.requests;
 
-import jakarta.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.Length;
 
 import java.time.LocalDateTime;

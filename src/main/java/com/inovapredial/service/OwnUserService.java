@@ -1,6 +1,6 @@
 package com.inovapredial.service;
 
-import com.inovapredial.dto.OwnUserRequestDTO;
+import com.inovapredial.dto.requests.OwnUserRequestDTO;
 import com.inovapredial.model.OwnUser;
 import com.inovapredial.repository.OwnUserRepository;
 import lombok.RequiredArgsConstructor;

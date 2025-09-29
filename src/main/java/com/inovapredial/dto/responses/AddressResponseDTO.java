@@ -1,4 +1,4 @@
-package com.inovapredial.dto;
+package com.inovapredial.dto.responses;
 
 import java.util.UUID;
 

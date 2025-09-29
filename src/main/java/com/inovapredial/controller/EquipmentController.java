@@ -1,8 +1,6 @@
 package com.inovapredial.controller;
 
 import com.inovapredial.dto.EquipmentFilterDTO;
-import com.inovapredial.dto.EquipmentRequestDTO;
-import com.inovapredial.dto.EquipmentResponseDTO;
 import com.inovapredial.dto.PageResponseDTO;
 import com.inovapredial.mapper.EquipmentMapper;
 import com.inovapredial.model.Equipment;

@@ -1,12 +1,13 @@
 package com.inovapredial.controller;
 
 import com.inovapredial.dto.BuildingFilterDTO;
-import com.inovapredial.dto.BuildingRequestDTO;
-import com.inovapredial.dto.BuildingResponseDTO;
-import com.inovapredial.dto.PageResponseDTO;
+import com.inovapredial.dto.requests.BuildingRequestDTO;
+import com.inovapredial.dto.responses.BuildingResponseDTO;
+import com.inovapredial.dto.responses.PageResponseDTO;
 import com.inovapredial.mapper.BuildingMapper;
 import com.inovapredial.model.Building;
 import com.inovapredial.service.BuildingService;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -26,6 +27,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+
+@Hidden
 @RestController
 @RequestMapping("buildings")
 @RequiredArgsConstructor
