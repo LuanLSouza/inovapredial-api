@@ -69,7 +69,7 @@ public class Equipment {
     @Column(name = "image_url")
     private String imageUrl;
 
-    @Column(name = "group")
+    @Column(name = "equipment_group")
     private String group;
 
     @Column(name = "model")

@@ -28,7 +28,7 @@ public class Calendar implements Serializable {
     private UUID id;
 
     @Column(name = "description")
-    private String Description;
+    private String description;
 
     @Column(name = "start_time")
     private LocalDateTime startTime;
