@@ -12,3 +12,4 @@ public interface EmployeeRepository extends JpaRepository<Employee, UUID>, JpaSp
     
     Optional<Employee> findByIdAndBuilding(UUID id, Building building);
 }
+
