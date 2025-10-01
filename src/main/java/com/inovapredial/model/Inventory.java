@@ -44,7 +44,7 @@ public class Inventory {
     @Column(name = "quantity")
     private Integer quantity;
 
-    @Column(name = "minimum_stock")
+    @Column(name = "minimum_quantity")
     private Integer minimumStock;
 
     @ManyToOne
