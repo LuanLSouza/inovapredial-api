@@ -66,7 +66,4 @@ public class WorkOrder {
     @JoinColumn(name = "employee_id")
     private Employee employee;
 
-    @ManyToOne
-    @JoinColumn(name = "plan_id")
-    private MaintenancePlan maintenancePlan;
 }
