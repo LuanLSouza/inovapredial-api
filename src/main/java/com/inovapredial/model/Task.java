@@ -66,5 +66,7 @@ public class Task {
     @JoinColumn(name = "employee_id")
     private Employee employee;
 
-
+    @ManyToOne
+    @JoinColumn(name = "building_id")
+    private Building building;
 }
