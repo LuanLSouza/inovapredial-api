@@ -5,6 +5,7 @@ import com.inovapredial.dto.responses.PageResponseDTO;
 import com.inovapredial.dto.requests.InventoryRequestDTO;
 import com.inovapredial.dto.responses.InventoryResponseDTO;
 import com.inovapredial.exceptions.NotFoundException;
+import com.inovapredial.exceptions.InsufficientStockException;
 import com.inovapredial.mapper.InventoryMapper;
 import com.inovapredial.model.Building;
 import com.inovapredial.model.Employee;
@@ -133,6 +134,61 @@ public class InventoryService {
                 .hasNext(inventoryPage.hasNext())
                 .hasPrevious(inventoryPage.hasPrevious())
                 .build();
+    }
+
+    @Transactional
+    public void reduceStock(String inventoryId, Integer quantity, String buildingId) {
+        OwnUser currentUser = securityContextService.getCurrentUser();
+        Building building = buildingService.findById(buildingId);
+
+        // Verificar se o usuário tem acesso ao building
+        if (!building.getUsers().contains(currentUser)) {
+            throw new NotFoundException("Building not found");
+        }
+
+        Inventory inventory = findByIdAndBuilding(inventoryId, buildingId);
+
+        // Verificar se há estoque suficiente
+        if (inventory.getQuantity() < quantity) {
+            throw new InsufficientStockException(
+                String.format("Estoque insuficiente. Disponível: %d, Solicitado: %d", 
+                    inventory.getQuantity(), quantity)
+            );
+        }
+
+        // Reduzir o estoque
+        inventory.setQuantity(inventory.getQuantity() - quantity);
+        inventoryRepository.save(inventory);
+    }
+
+    @Transactional
+    public void restoreStock(String inventoryId, Integer quantity, String buildingId) {
+        OwnUser currentUser = securityContextService.getCurrentUser();
+        Building building = buildingService.findById(buildingId);
+
+        // Verificar se o usuário tem acesso ao building
+        if (!building.getUsers().contains(currentUser)) {
+            throw new NotFoundException("Building not found");
+        }
+
+        Inventory inventory = findByIdAndBuilding(inventoryId, buildingId);
+
+        // Restaurar o estoque
+        inventory.setQuantity(inventory.getQuantity() + quantity);
+        inventoryRepository.save(inventory);
+    }
+
+    public Integer getAvailableStock(String inventoryId, String buildingId) {
+        OwnUser currentUser = securityContextService.getCurrentUser();
+        Building building = buildingService.findById(buildingId);
+
+        // Verificar se o usuário tem acesso ao building
+        if (!building.getUsers().contains(currentUser)) {
+            throw new NotFoundException("Building not found");
+        }
+
+        Inventory inventory = findByIdAndBuilding(inventoryId, buildingId);
+        return inventory.getQuantity();
     }
 }
 
