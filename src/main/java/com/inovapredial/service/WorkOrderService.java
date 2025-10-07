@@ -210,14 +210,7 @@ public class WorkOrderService {
         if (existingItem != null) {
             // Atualizar quantidade existente
             int newQuantity = existingItem.getQuantity() + dto.quantity();
-            
-            // Verificar se a nova quantidade total não excede o estoque
-            if (availableStock < newQuantity) {
-                throw new InsufficientStockException(
-                    String.format("Estoque insuficiente para adicionar %d unidades. Disponível: %d, Já utilizado: %d", 
-                        dto.quantity(), availableStock, existingItem.getQuantity())
-                );
-            }
+
             
             // Dar baixa no estoque apenas da quantidade adicional
             inventoryService.reduceStock(dto.inventoryId(), dto.quantity(), buildingId);
