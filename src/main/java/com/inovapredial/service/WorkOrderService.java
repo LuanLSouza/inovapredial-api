@@ -3,16 +3,23 @@ package com.inovapredial.service;
 import com.inovapredial.dto.WorkOrderFilterDTO;
 import com.inovapredial.dto.responses.PageResponseDTO;
 import com.inovapredial.dto.requests.WorkOrderRequestDTO;
+import com.inovapredial.dto.requests.WorkOrderInventoryRequestDTO;
 import com.inovapredial.dto.responses.WorkOrderResponseDTO;
+import com.inovapredial.dto.responses.WorkOrderInventoryResponseDTO;
 import com.inovapredial.exceptions.NotFoundException;
+import com.inovapredial.exceptions.InsufficientStockException;
 import com.inovapredial.mapper.WorkOrderMapper;
 import com.inovapredial.model.Building;
 import com.inovapredial.model.Employee;
 import com.inovapredial.model.Equipment;
+import com.inovapredial.model.Inventory;
 import com.inovapredial.model.OwnUser;
 import com.inovapredial.model.WorkOrder;
+import com.inovapredial.model.WorkOrderInventory;
+import com.inovapredial.model.WorkOrderInventoryId;
 import com.inovapredial.model.enums.ActivityStatus;
 import com.inovapredial.repository.WorkOrderRepository;
+import com.inovapredial.repository.WorkOrderInventoryRepository;
 import com.inovapredial.specification.WorkOrderSpecification;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +30,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -33,9 +41,11 @@ public class WorkOrderService {
 
     private final WorkOrderMapper mapper;
     private final WorkOrderRepository workOrderRepository;
+    private final WorkOrderInventoryRepository workOrderInventoryRepository;
     private final BuildingService buildingService;
     private final EquipmentService equipmentService;
     private final EmployeeService employeeService;
+    private final InventoryService inventoryService;
     private final SecurityContextService securityContextService;
 
     @Transactional
@@ -163,5 +173,170 @@ public class WorkOrderService {
                 .hasNext(workOrderPage.hasNext())
                 .hasPrevious(workOrderPage.hasPrevious())
                 .build();
+    }
+
+    @Transactional
+    public WorkOrderInventoryResponseDTO addInventoryItem(String workOrderId, WorkOrderInventoryRequestDTO dto, String buildingId) {
+        OwnUser currentUser = securityContextService.getCurrentUser();
+        Building building = buildingService.findById(buildingId);
+
+        // Verificar se o usuário tem acesso ao building
+        if (!building.getUsers().contains(currentUser)) {
+            throw new NotFoundException("Building not found");
+        }
+
+        // Buscar a ordem de serviço
+        WorkOrder workOrder = findByIdAndBuilding(workOrderId, buildingId);
+
+        // Buscar o item do inventário
+        Inventory inventory = inventoryService.findByIdAndBuilding(dto.inventoryId(), buildingId);
+
+        // Verificar disponibilidade no estoque usando o método do InventoryService
+        Integer availableStock = inventoryService.getAvailableStock(dto.inventoryId(), buildingId);
+        if (availableStock < dto.quantity()) {
+            throw new InsufficientStockException(
+                String.format("Estoque insuficiente. Disponível: %d, Solicitado: %d", 
+                    availableStock, dto.quantity())
+            );
+        }
+
+        // Verificar se o item já existe na ordem de serviço
+        WorkOrderInventoryId id = new WorkOrderInventoryId();
+        id.setWorkOrderId(UUID.fromString(workOrderId));
+        id.setInventoryId(UUID.fromString(dto.inventoryId()));
+
+        WorkOrderInventory existingItem = workOrderInventoryRepository.findById(id).orElse(null);
+
+        if (existingItem != null) {
+            // Atualizar quantidade existente
+            int newQuantity = existingItem.getQuantity() + dto.quantity();
+            
+            // Verificar se a nova quantidade total não excede o estoque
+            if (availableStock < newQuantity) {
+                throw new InsufficientStockException(
+                    String.format("Estoque insuficiente para adicionar %d unidades. Disponível: %d, Já utilizado: %d", 
+                        dto.quantity(), availableStock, existingItem.getQuantity())
+                );
+            }
+            
+            // Dar baixa no estoque apenas da quantidade adicional
+            inventoryService.reduceStock(dto.inventoryId(), dto.quantity(), buildingId);
+            
+            existingItem.setQuantity(newQuantity);
+            existingItem.setTotalCost(inventory.getCost().multiply(BigDecimal.valueOf(newQuantity)));
+            existingItem.setOutputDate(LocalDateTime.now());
+            
+            workOrderInventoryRepository.save(existingItem);
+            
+            // Atualizar total da ordem de serviço
+            updateWorkOrderTotalCost(workOrder);
+            
+            return new WorkOrderInventoryResponseDTO(
+                dto.inventoryId(),
+                inventory.getName(),
+                existingItem.getQuantity(),
+                inventory.getCost(),
+                existingItem.getTotalCost(),
+                existingItem.getOutputDate()
+            );
+        } else {
+            // Dar baixa no estoque
+            inventoryService.reduceStock(dto.inventoryId(), dto.quantity(), buildingId);
+            
+            // Criar novo item na ordem de serviço
+            BigDecimal totalCost = inventory.getCost().multiply(BigDecimal.valueOf(dto.quantity()));
+            
+            WorkOrderInventory newItem = WorkOrderInventory.builder()
+                .id(id)
+                .workOrder(workOrder)
+                .inventory(inventory)
+                .quantity(dto.quantity())
+                .totalCost(totalCost)
+                .outputDate(LocalDateTime.now())
+                .build();
+            
+            workOrderInventoryRepository.save(newItem);
+            
+            // Atualizar total da ordem de serviço
+            updateWorkOrderTotalCost(workOrder);
+            
+            return new WorkOrderInventoryResponseDTO(
+                dto.inventoryId(),
+                inventory.getName(),
+                newItem.getQuantity(),
+                inventory.getCost(),
+                newItem.getTotalCost(),
+                newItem.getOutputDate()
+            );
+        }
+    }
+
+    @Transactional
+    public void removeInventoryItem(String workOrderId, String inventoryId, String buildingId) {
+        OwnUser currentUser = securityContextService.getCurrentUser();
+        Building building = buildingService.findById(buildingId);
+
+        // Verificar se o usuário tem acesso ao building
+        if (!building.getUsers().contains(currentUser)) {
+            throw new NotFoundException("Building not found");
+        }
+
+        // Buscar a ordem de serviço
+        WorkOrder workOrder = findByIdAndBuilding(workOrderId, buildingId);
+
+        // Verificar se o item existe na ordem de serviço
+        WorkOrderInventoryId id = new WorkOrderInventoryId();
+        id.setWorkOrderId(UUID.fromString(workOrderId));
+        id.setInventoryId(UUID.fromString(inventoryId));
+
+        WorkOrderInventory item = workOrderInventoryRepository.findById(id)
+            .orElseThrow(() -> new NotFoundException("Item não encontrado na ordem de serviço"));
+
+        // Restaurar o estoque antes de remover o item
+        inventoryService.restoreStock(inventoryId, item.getQuantity(), buildingId);
+
+        // Remover o item
+        workOrderInventoryRepository.delete(item);
+
+        // Atualizar total da ordem de serviço
+        updateWorkOrderTotalCost(workOrder);
+    }
+
+    public List<WorkOrderInventoryResponseDTO> getWorkOrderInventory(String workOrderId, String buildingId) {
+        OwnUser currentUser = securityContextService.getCurrentUser();
+        Building building = buildingService.findById(buildingId);
+
+        // Verificar se o usuário tem acesso ao building
+        if (!building.getUsers().contains(currentUser)) {
+            throw new NotFoundException("Building not found");
+        }
+
+        // Buscar a ordem de serviço
+        WorkOrder workOrder = findByIdAndBuilding(workOrderId, buildingId);
+
+        // Buscar todos os itens da ordem de serviço
+        List<WorkOrderInventory> items = workOrderInventoryRepository.findByWorkOrder(workOrder);
+
+        return items.stream()
+            .map(item -> new WorkOrderInventoryResponseDTO(
+                item.getInventory().getId().toString(),
+                item.getInventory().getName(),
+                item.getQuantity(),
+                item.getInventory().getCost(),
+                item.getTotalCost(),
+                item.getOutputDate()
+            ))
+            .toList();
+    }
+
+    private void updateWorkOrderTotalCost(WorkOrder workOrder) {
+        List<WorkOrderInventory> items = workOrderInventoryRepository.findByWorkOrder(workOrder);
+        
+        BigDecimal totalCost = items.stream()
+            .map(WorkOrderInventory::getTotalCost)
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
+        
+        workOrder.setTotalCost(totalCost);
+        workOrderRepository.save(workOrder);
     }
 }

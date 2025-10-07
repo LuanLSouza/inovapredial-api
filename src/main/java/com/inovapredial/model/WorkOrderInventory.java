@@ -43,6 +43,6 @@ public class WorkOrderInventory {
     @Column(name = "total_cost")
     private BigDecimal totalCost;
 
-    @Column(name = "input_date")
+    @Column(name = "output_date")
     private LocalDateTime outputDate;
 }
