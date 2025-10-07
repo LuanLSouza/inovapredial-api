@@ -58,6 +58,9 @@ public class Task {
     @Column(name = "cost")
     private BigDecimal cost;
 
+    @Column(name = "reason")
+    private String reason;
+
     @ManyToOne
     @JoinColumn(name = "work_order_id")
     private WorkOrder workOrder;
