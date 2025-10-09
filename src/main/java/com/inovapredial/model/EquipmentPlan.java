@@ -40,4 +40,11 @@ public class EquipmentPlan {
 
     @Column(name = "next_due_date")
     private LocalDate nextDueDate;
+
+    @Column(name = "is_realized")
+    private boolean isRealized;
+
+    @ManyToOne
+    @JoinColumn(name = "building_id")
+    private Building building;
 }
