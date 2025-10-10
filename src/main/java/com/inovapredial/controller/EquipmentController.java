@@ -1,7 +1,6 @@
 package com.inovapredial.controller;
 
 import com.inovapredial.dto.EquipmentFilterDTO;
-import com.inovapredial.dto.responses.PageResponseDTO;
 import com.inovapredial.dto.requests.EquipmentRequestDTO;
 import com.inovapredial.dto.responses.EquipmentResponseDTO;
 import com.inovapredial.dto.responses.PageResponseDTO;

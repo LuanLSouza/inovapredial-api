@@ -1,9 +1,9 @@
 package com.inovapredial.controller;
 
 import com.inovapredial.dto.MaintenancePlanFilterDTO;
-import com.inovapredial.dto.responses.PageResponseDTO;
 import com.inovapredial.dto.requests.MaintenancePlanRequestDTO;
 import com.inovapredial.dto.responses.MaintenancePlanResponseDTO;
+import com.inovapredial.dto.responses.PageResponseDTO;
 import com.inovapredial.mapper.MaintenancePlanMapper;
 import com.inovapredial.model.MaintenancePlan;
 import com.inovapredial.service.MaintenancePlanService;
