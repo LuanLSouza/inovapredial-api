@@ -10,7 +10,6 @@ import com.inovapredial.model.Building;
 import com.inovapredial.model.Calendar;
 import com.inovapredial.model.Employee;
 import com.inovapredial.model.OwnUser;
-import com.inovapredial.repository.CalendarRepository;
 import com.inovapredial.repository.EmployeeRepository;
 import com.inovapredial.specification.EmployeeSpecification;
 import jakarta.transaction.Transactional;
@@ -32,7 +31,7 @@ public class EmployeeService {
     private final EmployeeMapper mapper;
     private final EmployeeRepository employeeRepository;
     private final BuildingService buildingService;
-    private final CalendarRepository calendarRepository;
+    private final CalendarService calendarService;
     private final SecurityContextService securityContextService;
 
     @Transactional
@@ -50,19 +49,7 @@ public class EmployeeService {
 
         // Se calendar foi fornecido, criar ou atualizar o calendar
         if (dto.calendar() != null) {
-            Calendar calendar;
-            if (dto.calendar().id() != null) {
-                // Se tem ID, buscar existente ou criar novo
-                calendar = calendarRepository.findById(dto.calendar().id())
-                        .orElseGet(() -> {
-                            Calendar newCalendar = mapper.toEntity(dto.calendar());
-                            return calendarRepository.save(newCalendar);
-                        });
-            } else {
-                // Se não tem ID, criar novo
-                calendar = mapper.toEntity(dto.calendar());
-                calendar = calendarRepository.save(calendar);
-            }
+            Calendar calendar = calendarService.createOrUpdateCalendar(dto.calendar());
             toSave.setCalendar(calendar);
         }
 
@@ -84,19 +71,7 @@ public class EmployeeService {
 
         // Se calendar foi fornecido, criar ou atualizar o calendar
         if (dto.calendar() != null) {
-            Calendar calendar;
-            if (dto.calendar().id() != null) {
-                // Se tem ID, buscar existente ou criar novo
-                calendar = calendarRepository.findById(dto.calendar().id())
-                        .orElseGet(() -> {
-                            Calendar newCalendar = mapper.toEntity(dto.calendar());
-                            return calendarRepository.save(newCalendar);
-                        });
-            } else {
-                // Se não tem ID, criar novo
-                calendar = mapper.toEntity(dto.calendar());
-                calendar = calendarRepository.save(calendar);
-            }
+            Calendar calendar = calendarService.createOrUpdateCalendar(dto.calendar());
             employeeToUpdate.setCalendar(calendar);
         } else {
             employeeToUpdate.setCalendar(null);

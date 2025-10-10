@@ -12,7 +12,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.UUID;
 
 @Entity
@@ -30,9 +30,33 @@ public class Calendar implements Serializable {
     @Column(name = "description")
     private String description;
 
+    @Column(name = "monday")
+    private boolean monday;
+
+    @Column(name = "tuesday")
+    private boolean tuesday;
+
+    @Column(name = "wednesday")
+    private boolean wednesday;
+
+    @Column(name = "thursday")
+    private boolean thursday;
+
+    @Column(name = "friday")
+    private boolean friday;
+
+    @Column(name = "saturday")
+    private boolean saturday;
+
+    @Column(name = "sunday")
+    private boolean sunday;
+
     @Column(name = "start_time")
-    private LocalDateTime startTime;
+    private LocalTime startTime;
 
     @Column(name = "end_time")
-    private LocalDateTime endTime;
+    private LocalTime endTime;
+
+    @Column(name = "has_break")
+    private boolean hasBreak;
 }
