@@ -42,7 +42,7 @@ public class EquipmentPlan {
     private LocalDate nextDueDate;
 
     @Column(name = "is_realized")
-    private boolean isRealized;
+    private boolean realized;
 
     @ManyToOne
     @JoinColumn(name = "building_id")
