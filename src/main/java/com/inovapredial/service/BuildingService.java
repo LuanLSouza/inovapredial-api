@@ -12,6 +12,7 @@ import com.inovapredial.model.OwnUser;
 import com.inovapredial.repository.AddressRepository;
 import com.inovapredial.repository.BuildingRepository;
 import com.inovapredial.specification.BuildingSpecification;
+import com.inovapredial.validator.BuildingValidator;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -31,6 +32,7 @@ public class BuildingService {
     private final AddressRepository addressRepository;
     private final BuildingRepository buildingRepository;
     private final SecurityContextService securityContextService;
+    private final BuildingValidator buildingValidator;
 
     @Transactional
     public Building create(BuildingRequestDTO dto) {
@@ -80,6 +82,10 @@ public class BuildingService {
 
     public  void delete(String id) {
         var building = findById(id);
+        
+        // Valida se a edificação pode ser excluída
+        buildingValidator.validateBuildingDeletion(building.getId());
+        
         buildingRepository.delete(building);
     }
 

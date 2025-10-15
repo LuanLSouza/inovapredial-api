@@ -11,4 +11,6 @@ import java.util.UUID;
 public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, JpaSpecificationExecutor<Equipment> {
     
     Optional<Equipment> findByIdAndBuilding(UUID id, Building building);
+    
+    long countByBuildingId(UUID buildingId);
 }

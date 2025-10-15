@@ -103,6 +103,19 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
+    @ExceptionHandler(BuildingDeletionBlockedException.class)
+    public ResponseEntity<ErrorResponseDTO> handleBuildingDeletionBlockedException(BuildingDeletionBlockedException e, HttpServletRequest request) {
+        var error = new ErrorResponseDTO(
+                LocalDateTime.now(),
+                HttpStatus.CONFLICT.value(),
+                "Building Deletion Blocked",
+                e.getMessage(),
+                request.getRequestURI(),
+                List.of()
+        );
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleAllExceptions(Exception ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ocorreu um erro inesperado");

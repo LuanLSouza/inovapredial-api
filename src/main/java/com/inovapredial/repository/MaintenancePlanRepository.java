@@ -11,4 +11,6 @@ import java.util.UUID;
 public interface MaintenancePlanRepository extends JpaRepository<MaintenancePlan, UUID>, JpaSpecificationExecutor<MaintenancePlan> {
     
     Optional<MaintenancePlan> findByIdAndBuilding(UUID id, Building building);
+    
+    long countByBuildingId(UUID buildingId);
 }

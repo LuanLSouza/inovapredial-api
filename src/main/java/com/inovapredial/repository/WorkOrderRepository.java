@@ -11,4 +11,6 @@ import java.util.UUID;
 public interface WorkOrderRepository extends JpaRepository<WorkOrder, UUID>, JpaSpecificationExecutor<WorkOrder> {
     
     Optional<WorkOrder> findByIdAndBuilding(UUID id, Building building);
+    
+    long countByBuildingId(UUID buildingId);
 }

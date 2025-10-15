@@ -15,6 +15,8 @@ public interface TaskRepository extends JpaRepository<Task, UUID>, JpaSpecificat
     Optional<Task> findByIdAndBuilding(UUID id, Building building);
 
     List<Task> findAllByWorkOrderAndBuilding(WorkOrder workOrder, Building building);
+    
+    long countByBuildingId(UUID buildingId);
 }
 
 

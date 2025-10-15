@@ -11,4 +11,6 @@ import java.util.UUID;
 public interface InventoryRepository extends JpaRepository<Inventory, UUID>, JpaSpecificationExecutor<Inventory> {
     
     Optional<Inventory> findByIdAndBuilding(UUID id, Building building);
+    
+    long countByBuildingId(UUID buildingId);
 }
