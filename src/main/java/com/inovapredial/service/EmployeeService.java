@@ -12,6 +12,7 @@ import com.inovapredial.model.Employee;
 import com.inovapredial.model.OwnUser;
 import com.inovapredial.repository.EmployeeRepository;
 import com.inovapredial.specification.EmployeeSpecification;
+import com.inovapredial.validator.EmployeeValidator;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -33,6 +34,7 @@ public class EmployeeService {
     private final BuildingService buildingService;
     private final CalendarService calendarService;
     private final SecurityContextService securityContextService;
+    private final EmployeeValidator employeeValidator;
 
     @Transactional
     public Employee create(EmployeeRequestDTO dto, String buildingId) {
@@ -95,6 +97,7 @@ public class EmployeeService {
 
     public void delete(String id, String buildingId) {
         var employee = findByIdAndBuilding(id, buildingId);
+        employeeValidator.validateEmployeeDeletion(employee.getId());
         employeeRepository.delete(employee);
     }
 

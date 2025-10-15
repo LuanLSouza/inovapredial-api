@@ -98,3 +98,4 @@ public class EquipmentPlanController {
         return equipmentPlanService.getEquipmentPlans(equipmentId, buildingId);
     }
 }
+

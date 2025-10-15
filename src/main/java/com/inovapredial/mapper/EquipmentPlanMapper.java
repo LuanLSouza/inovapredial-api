@@ -15,3 +15,4 @@ public interface EquipmentPlanMapper {
     @Mapping(source = "building.id", target = "buildingId")
     EquipmentPlanResponseDTO toResponseDTO(EquipmentPlan equipmentPlan);
 }
+

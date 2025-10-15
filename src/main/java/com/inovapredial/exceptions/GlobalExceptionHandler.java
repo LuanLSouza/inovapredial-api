@@ -3,6 +3,7 @@ package com.inovapredial.exceptions;
 import com.inovapredial.dto.responses.ErrorResponseDTO;
 import com.inovapredial.dto.FieldErrorsDTO;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -119,5 +120,18 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleAllExceptions(Exception ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ocorreu um erro inesperado");
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponseDTO> handleDataIntegrityViolationException(DataIntegrityViolationException e, HttpServletRequest request) {
+        var error = new ErrorResponseDTO(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                "Data Integrity Violation",
+                "Existe vinculos bloqueando esta operação",
+                request.getRequestURI(),
+                List.of()
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 }

@@ -18,9 +18,12 @@ import com.inovapredial.model.WorkOrder;
 import com.inovapredial.model.WorkOrderInventory;
 import com.inovapredial.model.WorkOrderInventoryId;
 import com.inovapredial.model.enums.ActivityStatus;
+import com.inovapredial.model.enums.EquipmentStatus;
 import com.inovapredial.repository.WorkOrderRepository;
 import com.inovapredial.repository.WorkOrderInventoryRepository;
+import com.inovapredial.repository.EquipmentRepository;
 import com.inovapredial.specification.WorkOrderSpecification;
+import com.inovapredial.validator.WorkOrderValidator;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -42,11 +45,13 @@ public class WorkOrderService {
     private final WorkOrderMapper mapper;
     private final WorkOrderRepository workOrderRepository;
     private final WorkOrderInventoryRepository workOrderInventoryRepository;
+    private final EquipmentRepository equipmentRepository;
     private final BuildingService buildingService;
     private final EquipmentService equipmentService;
     private final EmployeeService employeeService;
     private final InventoryService inventoryService;
     private final SecurityContextService securityContextService;
+    private final WorkOrderValidator workOrderValidator;
 
     @Transactional
     public WorkOrder create(WorkOrderRequestDTO dto, String buildingId) {
@@ -63,6 +68,9 @@ public class WorkOrderService {
         if (!equipment.getBuilding().getId().equals(building.getId())) {
             throw new NotFoundException("Equipment not found in this building");
         }
+
+        // Validar se já existe ordem de serviço em aberto para este equipamento
+        workOrderValidator.validateWorkOrderCreation(equipment, building);
         var toSave = mapper.toEntity(dto);
         // Buscar Employee pelo ID fornecido no request
         if (dto.employeeId() != null) {
@@ -84,6 +92,10 @@ public class WorkOrderService {
         if(toSave.getActivityStatus() == null) {
             toSave.setActivityStatus(ActivityStatus.OPEN);
         }
+
+        // Alterar status do equipamento para EM_MANUTENCAO quando ordem for aberta
+        equipment.setEquipmentStatus(EquipmentStatus.UNDER_MAINTENANCE);
+        equipmentRepository.save(equipment);
 
         return workOrderRepository.save(toSave);
     }
@@ -119,6 +131,27 @@ public class WorkOrderService {
         }
 
         mapper.updateWorkOrderFromRequestDTO(dto, workOrderToUpdate);
+
+        // Validar conclusão da ordem de serviço se o status foi alterado para COMPLETED
+        if (workOrderToUpdate.getActivityStatus() == ActivityStatus.COMPLETED) {
+            workOrderValidator.validateWorkOrderCompletion(workOrderToUpdate);
+            
+            // Definir data de fechamento se não estiver definida
+            if (workOrderToUpdate.getClosingDate() == null) {
+                workOrderToUpdate.setClosingDate(LocalDateTime.now());
+            }
+            
+            // Alterar status do equipamento para ATIVO quando ordem for concluída
+            Equipment equipment = workOrderToUpdate.getEquipment();
+            equipment.setEquipmentStatus(EquipmentStatus.ACTIVE);
+            equipmentRepository.save(equipment);
+        } else if (workOrderToUpdate.getActivityStatus() == ActivityStatus.CANCELLED) {
+            // Se a ordem for cancelada, alterar status do equipamento para ATIVO
+            Equipment equipment = workOrderToUpdate.getEquipment();
+            equipment.setEquipmentStatus(EquipmentStatus.ACTIVE);
+            equipmentRepository.save(equipment);
+
+        }
 
         return workOrderRepository.save(workOrderToUpdate);
     }

@@ -13,6 +13,7 @@ import com.inovapredial.model.Task;
 import com.inovapredial.model.WorkOrder;
 import com.inovapredial.model.enums.ActivityStatus;
 import com.inovapredial.repository.TaskRepository;
+import com.inovapredial.repository.WorkOrderRepository;
 import com.inovapredial.specification.TaskSpecification;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -33,6 +36,7 @@ public class TaskService {
 
     private final TaskMapper mapper;
     private final TaskRepository taskRepository;
+    private final WorkOrderRepository workOrderRepository;
     private final BuildingService buildingService;
     private final WorkOrderService workOrderService;
     private final EmployeeService employeeService;
@@ -170,9 +174,32 @@ public class TaskService {
     @Transactional
     public Task updateStatus(String id, ActivityStatus status, String buildingId, String reason) {
         Task task = findByIdAndBuilding(id, buildingId);
+        ActivityStatus previousStatus = task.getActivityStatus();
+        
         task.setActivityStatus(status);
         task.setReason(reason);
+        
+        // Se a tarefa foi marcada como concluída e possui custo, adicionar à ordem de serviço
+        if (status == ActivityStatus.COMPLETED && task.getCost() != null && task.getCost().compareTo(BigDecimal.ZERO) > 0) {
+            updateWorkOrderCostFromTask(task);
+        }
+        
+        // Definir data de fim se a tarefa foi concluída
+        if (status == ActivityStatus.COMPLETED && task.getEndDate() == null) {
+            task.setEndDate(LocalDateTime.now());
+        }
+        
         return taskRepository.save(task);
+    }
+    
+    private void updateWorkOrderCostFromTask(Task task) {
+        WorkOrder workOrder = task.getWorkOrder();
+        if (workOrder != null) {
+            BigDecimal currentTotalCost = workOrder.getTotalCost() != null ? workOrder.getTotalCost() : BigDecimal.ZERO;
+            BigDecimal newTotalCost = currentTotalCost.add(task.getCost());
+            workOrder.setTotalCost(newTotalCost);
+            workOrderRepository.save(workOrder);
+        }
     }
 }
 

@@ -14,3 +14,4 @@ public record EquipmentPlanResponseDTO(
         UUID buildingId
 ) {
 }
+
