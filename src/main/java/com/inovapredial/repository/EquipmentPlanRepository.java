@@ -18,4 +18,6 @@ public interface EquipmentPlanRepository extends JpaRepository<EquipmentPlan, co
     List<EquipmentPlan> findByEquipmentAndBuilding(Equipment equipment, Building building);
     
     long countByBuildingId(UUID buildingId);
+    
+    long countByEquipmentId(UUID equipmentId);
 }

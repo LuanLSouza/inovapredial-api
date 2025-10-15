@@ -13,4 +13,6 @@ public interface WorkOrderRepository extends JpaRepository<WorkOrder, UUID>, Jpa
     Optional<WorkOrder> findByIdAndBuilding(UUID id, Building building);
     
     long countByBuildingId(UUID buildingId);
+    
+    long countByEquipmentId(UUID equipmentId);
 }

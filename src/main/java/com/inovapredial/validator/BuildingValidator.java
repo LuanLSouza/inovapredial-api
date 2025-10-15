@@ -1,6 +1,6 @@
 package com.inovapredial.validator;
 
-import com.inovapredial.exceptions.BuildingDeletionBlockedException;
+import com.inovapredial.exceptions.DeletionBlockedException;
 import com.inovapredial.repository.BuildingRepository;
 import com.inovapredial.repository.EmployeeRepository;
 import com.inovapredial.repository.EquipmentPlanRepository;
@@ -34,31 +34,31 @@ public class BuildingValidator {
         }
 
         if (employeeRepository.countByBuildingId(buildingId) > 0) {
-            throw new BuildingDeletionBlockedException("Existe vinculos bloqueando esta operação");
+            throw new DeletionBlockedException("Existe vinculos bloqueando esta operação");
         }
 
         if (taskRepository.countByBuildingId(buildingId) > 0) {
-            throw new BuildingDeletionBlockedException("Existe vinculos bloqueando esta operação");
+            throw new DeletionBlockedException("Existe vinculos bloqueando esta operação");
         }
 
         if (workOrderRepository.countByBuildingId(buildingId) > 0) {
-            throw new BuildingDeletionBlockedException("Existe vinculos bloqueando esta operação");
+            throw new DeletionBlockedException("Existe vinculos bloqueando esta operação");
         }
 
         if (equipmentRepository.countByBuildingId(buildingId) > 0) {
-            throw new BuildingDeletionBlockedException("Existe vinculos bloqueando esta operação");
+            throw new DeletionBlockedException("Existe vinculos bloqueando esta operação");
         }
 
         if (inventoryRepository.countByBuildingId(buildingId) > 0) {
-            throw new BuildingDeletionBlockedException("Existe vinculos bloqueando esta operação");
+            throw new DeletionBlockedException("Existe vinculos bloqueando esta operação");
         }
 
         if (maintenancePlanRepository.countByBuildingId(buildingId) > 0) {
-            throw new BuildingDeletionBlockedException("Existe vinculos bloqueando esta operação");
+            throw new DeletionBlockedException("Existe vinculos bloqueando esta operação");
         }
 
         if (equipmentPlanRepository.countByBuildingId(buildingId) > 0) {
-            throw new BuildingDeletionBlockedException("Existe vinculos bloqueando esta operação");
+            throw new DeletionBlockedException("Existe vinculos bloqueando esta operação");
         }
     }
 }

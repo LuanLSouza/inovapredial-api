@@ -12,6 +12,7 @@ import com.inovapredial.model.Equipment;
 import com.inovapredial.model.OwnUser;
 import com.inovapredial.repository.EquipmentRepository;
 import com.inovapredial.specification.EquipmentSpecification;
+import com.inovapredial.validator.EquipmentValidator;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -33,6 +34,7 @@ public class EquipmentService {
     private final BuildingService buildingService;
     private final CalendarService calendarService;
     private final SecurityContextService securityContextService;
+    private final EquipmentValidator equipmentValidator;
 
     @Transactional
     public Equipment create(EquipmentRequestDTO dto, String buildingId) {
@@ -43,6 +45,9 @@ public class EquipmentService {
         if (!building.getUsers().contains(currentUser)) {
             throw new NotFoundException("Building not found");
         }
+
+        // Validar equipamento
+        equipmentValidator.validate(dto);
 
         var toSave = mapper.toEntity(dto);
         toSave.setOwnUser(currentUser);
@@ -67,6 +72,9 @@ public class EquipmentService {
         }
 
         var equipmentToUpdate = findByIdAndBuilding(id, buildingId);
+
+        // Validar equipamento
+        equipmentValidator.validate(dto);
 
         mapper.updateEquipmentFromRequestDTO(dto, equipmentToUpdate);
 
@@ -96,6 +104,10 @@ public class EquipmentService {
 
     public void delete(String id, String buildingId) {
         var equipment = findByIdAndBuilding(id, buildingId);
+        
+        // Validar se o equipamento pode ser deletado
+        equipmentValidator.validateEquipmentDeletion(equipment.getId());
+        
         equipmentRepository.delete(equipment);
     }
 

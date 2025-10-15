@@ -103,12 +103,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
-    @ExceptionHandler(BuildingDeletionBlockedException.class)
-    public ResponseEntity<ErrorResponseDTO> handleBuildingDeletionBlockedException(BuildingDeletionBlockedException e, HttpServletRequest request) {
+    @ExceptionHandler(DeletionBlockedException.class)
+    public ResponseEntity<ErrorResponseDTO> handleEquipmentDeletionBlockedException(DeletionBlockedException e, HttpServletRequest request) {
         var error = new ErrorResponseDTO(
                 LocalDateTime.now(),
                 HttpStatus.CONFLICT.value(),
-                "Building Deletion Blocked",
+                "Equipment Deletion Blocked",
                 e.getMessage(),
                 request.getRequestURI(),
                 List.of()
