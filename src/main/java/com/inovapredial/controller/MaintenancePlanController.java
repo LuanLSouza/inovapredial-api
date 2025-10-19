@@ -7,6 +7,7 @@ import com.inovapredial.dto.responses.PageResponseDTO;
 import com.inovapredial.mapper.MaintenancePlanMapper;
 import com.inovapredial.model.MaintenancePlan;
 import com.inovapredial.service.MaintenancePlanService;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+@Hidden
 @RestController
 @RequestMapping("maintenance-plans")
 @RequiredArgsConstructor

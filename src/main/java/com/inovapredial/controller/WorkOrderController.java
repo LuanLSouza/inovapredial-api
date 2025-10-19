@@ -9,6 +9,7 @@ import com.inovapredial.dto.responses.WorkOrderResponseDTO;
 import com.inovapredial.mapper.WorkOrderMapper;
 import com.inovapredial.model.WorkOrder;
 import com.inovapredial.service.WorkOrderService;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -30,6 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+@Hidden
 @RestController
 @RequestMapping("work-orders")
 @RequiredArgsConstructor

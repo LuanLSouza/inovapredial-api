@@ -4,6 +4,7 @@ import com.inovapredial.dto.requests.EquipmentPlanRequestDTO;
 import com.inovapredial.dto.requests.EquipmentPlanUpdateRequestDTO;
 import com.inovapredial.dto.responses.EquipmentPlanResponseDTO;
 import com.inovapredial.service.EquipmentPlanService;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+@Hidden
 @RestController
 @RequestMapping("equipment-plans")
 @RequiredArgsConstructor

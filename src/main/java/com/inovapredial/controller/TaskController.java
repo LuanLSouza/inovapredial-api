@@ -8,6 +8,7 @@ import com.inovapredial.mapper.TaskMapper;
 import com.inovapredial.model.Task;
 import com.inovapredial.model.enums.ActivityStatus;
 import com.inovapredial.service.TaskService;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -30,6 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+@Hidden
 @RestController
 @RequestMapping("tasks")
 @RequiredArgsConstructor
